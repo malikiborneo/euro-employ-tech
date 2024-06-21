@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 import pycountry
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import requests
 from io import BytesIO
 
@@ -38,9 +38,19 @@ def get_flag_url(code):
     return f"https://flagcdn.com/w40/{code.lower()}.png"
 
 # Streamlit app
+st.set_page_config(page_title="Euro Employ Tech by Edu", page_icon=":bar_chart:", layout="wide")
+
 st.title("Employment in Technology and Knowledge-Intensive Sectors")
 st.write("""
 How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
+""")
+
+# About me
+st.sidebar.title("About Me")
+st.sidebar.info("""
+Student: [rakb0002@student.monash.edu](mailto:rakb0002@student.monash.edu)
+Student Number: 34292020
+Monash University, Master of Cybersecurity
 """)
 
 # Dataset remarks
@@ -54,7 +64,6 @@ st.write("""
 - **ISCED 0-2:** Lower levels of education (early childhood to lower secondary)
 - **ISCED 3-4:** Upper secondary to post-secondary non-tertiary education
 - **ISCED 5-8:** Tertiary education (short-cycle tertiary to doctoral level)
-- **ISCED 9:** Not applicable (used for miscellaneous categories or unknown education levels)
 """)
 
 # Interactive elements
@@ -77,9 +86,13 @@ cols = st.columns(len(selected_countries))
 for col, country_code in zip(cols, selected_countries):
     country_name = get_country_name(country_code)
     flag_url = get_flag_url(country_code)
-    response = requests.get(flag_url)
-    img = Image.open(BytesIO(response.content))
-    col.image(img, width=40)
+    try:
+        response = requests.get(flag_url)
+        response.raise_for_status()  # Ensure we handle HTTP errors
+        img = Image.open(BytesIO(response.content))
+        col.image(img, width=40)
+    except (requests.exceptions.RequestException, UnidentifiedImageError):
+        col.write(f"{country_name} (flag not available)")
     col.write(country_name)
 
 # Filter data based on selections
