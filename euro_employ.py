@@ -1,11 +1,16 @@
 import streamlit as st
 import pandas as pd
+
+# Ensure matplotlib is installed
+import os
+os.system('pip install matplotlib')
+
 import matplotlib.pyplot as plt
 
 st.title('Employment in Technology and Knowledge-Intensive Sectors by Level of Education')
 
 # Load the data directly from the repository
-file_path = 'estat_htec_emp_nisced2.tsv'  # Replace with the correct path if needed
+file_path = '/mnt/data/estat_htec_emp_nisced2.tsv'
 data = pd.read_csv(file_path, sep='\t')
 
 # Clean and process the data
