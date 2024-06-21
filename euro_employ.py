@@ -43,12 +43,12 @@ def get_country_name(code):
 
 # Country code to flag URL mapping
 def get_flag_url(code):
-    if code in ['EL', 'GR']:
-        code = 'GR'  # Correcting Greece code
-    elif code in ['UK', 'GB']:
-        code = 'GB'  # Correcting UK code
-    elif code in ['EU27_2020', 'EA20']:
+    if code in ['EU27_2020', 'EA20']:
         return "https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg"
+    if code == 'EL':
+        code = 'GR'  # Correcting Greece code
+    elif code == 'UK':
+        code = 'GB'  # Correcting UK code
     return f"https://flagcdn.com/w40/{code.lower()}.png"
 
 
