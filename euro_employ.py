@@ -31,6 +31,8 @@ def get_country_name(code):
         code = 'GR'  # Correcting Greece code
     elif code == 'UK':
         code = 'GB'  # Correcting UK code
+    elif code == 'EU27_2020':
+        return 'European Union (27 countries)'
     try:
         country = pycountry.countries.get(alpha_2=code)
         return country.name
@@ -43,7 +45,10 @@ def get_flag_url(code):
         code = 'GR'  # Correcting Greece code
     elif code == 'UK':
         code = 'GB'  # Correcting UK code
+    elif code == 'EU27_2020':
+        return "https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg"
     return f"https://flagcdn.com/w40/{code.lower()}.png"
+
 
 # Streamlit app
 st.set_page_config(page_title="Euro Employ Tech by Education", page_icon=":bar_chart:", layout="wide")
