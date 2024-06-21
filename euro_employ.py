@@ -63,7 +63,7 @@ def display_svg(url):
 # Streamlit app
 st.set_page_config(page_title="Euro Employ Tech by Education", page_icon=":bar_chart:", layout="wide")
 
-st.title("Employment in Technology and Knowledge-Intensive Sectors")
+st.title("Employment in Technology and Knowledge-Intensive Sectors Across European Countries")
 st.write("""
 **Research question:** How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
 """)
