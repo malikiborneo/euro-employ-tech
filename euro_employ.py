@@ -31,8 +31,10 @@ def get_country_name(code):
         code = 'GR'  # Correcting Greece code
     elif code == 'UK':
         code = 'GB'  # Correcting UK code
-    elif code == 'EU':
+    elif code == 'EU27_2020':
         return 'European Union (27 countries)'
+    elif code == 'EA20':
+        return 'Euro Area (20 countries)'
     try:
         country = pycountry.countries.get(alpha_2=code)
         return country.name
@@ -41,11 +43,11 @@ def get_country_name(code):
 
 # Country code to flag URL mapping
 def get_flag_url(code):
-    if code == 'EL':
+    if code in ['EL', 'GR']:
         code = 'GR'  # Correcting Greece code
-    elif code == 'UK':
+    elif code in ['UK', 'GB']:
         code = 'GB'  # Correcting UK code
-    elif code == 'EU':
+    elif code in ['EU27_2020', 'EA20']:
         return "https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg"
     return f"https://flagcdn.com/w40/{code.lower()}.png"
 
