@@ -7,7 +7,7 @@ import requests
 from io import BytesIO
 
 # Load the data
-file_path = 'estat_htec_emp_nisced2.tsv'  # Update this path
+file_path = 'estat_htec_emp_nisced2.tsv'  
 data = pd.read_csv(file_path, sep='\t')
 
 # Clean and transform the data
@@ -44,7 +44,7 @@ def get_country_name(code):
 # Country code to flag URL mapping
 def get_flag_url(code):
     if code in ['EU27_2020', 'EA20']:
-        code = 'EU'
+        code = 'EU' # Correcting the EU code
     if code == 'EL':
         code = 'GR'  # Correcting Greece code
     elif code == 'UK':
@@ -106,7 +106,7 @@ selected_countries = st.multiselect(
 
 # Display selected countries with flags in a grid
 st.write("### Selected Countries and Flags")
-num_columns = 6  # You can adjust this number based on your preference
+num_columns = 6 
 num_rows = (len(selected_countries) + num_columns - 1) // num_columns
 
 for row in range(num_rows):
@@ -119,7 +119,7 @@ for row in range(num_rows):
             flag_url = get_flag_url(country_code)
             try:
                 response = requests.get(flag_url)
-                response.raise_for_status()  # Ensure we handle HTTP errors
+                response.raise_for_status()  
                 img = Image.open(BytesIO(response.content))
                 cols[col_index].image(img, width=40)
             except (requests.exceptions.RequestException, UnidentifiedImageError):
