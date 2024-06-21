@@ -65,7 +65,6 @@ st.write("""
 - **ISCED 0-2:** Lower levels of education (early childhood to lower secondary)
 - **ISCED 3-4:** Upper secondary to post-secondary non-tertiary education
 - **ISCED 5-8:** Tertiary education (short-cycle tertiary to doctoral level)
-- **ISCED 9:** Not applicable (used for miscellaneous categories or unknown education levels)
 """)
 
 # Interactive elements
@@ -148,3 +147,12 @@ st.pyplot(fig)
 # Display Data Table
 st.header("Data Table")
 st.write(filtered_metrics)
+
+# Display Data Table for Mean and SD
+st.header("Mean Employment Rates by Education Level and Year")
+mean_table = filtered_metrics.pivot(index='year', columns='isced11', values='mean')
+st.dataframe(mean_table)
+
+st.header("Standard Deviation of Employment Rates by Education Level and Year")
+std_table = filtered_metrics.pivot(index='year', columns='isced11', values='std')
+st.dataframe(std_table)
