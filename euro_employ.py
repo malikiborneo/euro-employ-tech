@@ -1,59 +1,80 @@
-import streamlit as st
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import streamlit as st
 
-st.title('Employment in Technology and Knowledge-Intensive Sectors by Level of Education')
-
-# Ensure the file path is correct
+# Load the data
 file_path = 'estat_htec_emp_nisced2.tsv'
+data = pd.read_csv(file_path, sep='\t')
 
-try:
-    # Load the data
-    data = pd.read_csv(file_path, sep='\t')
-    
-    # Clean and process the data
-    data.columns = data.columns.str.strip()  # Clean column names
-    data = data.rename(columns=lambda x: x.split('\\')[0])  # Remove extra characters from column names
-    data.replace(':', pd.NA, inplace=True)  # Handle missing values
-    data.dropna(inplace=True)  # Drop rows with missing values
-    
-    # Convert necessary columns to float
-    for col in data.columns[5:]:
-        data[col] = data[col].apply(lambda x: float(str(x).replace(' b', '')))
-    
-    # Display the first few rows of the cleaned data
-    st.write("Cleaned Data Preview:")
-    st.write(data.head())
-    
-    # Transform data for easier plotting
-    data_long = pd.melt(data, id_vars=['freq', 'nace_r2', 'unit', 'isced11', 'geo'], var_name='Year', value_name='Employment')
-    
-    # Calculate mean and standard deviation
-    mean_employment = data_long.groupby('isced11')['Employment'].mean()
-    std_employment = data_long.groupby('isced11')['Employment'].std()
+# Clean and transform the data
+data.columns = data.columns.str.strip()
+data.rename(columns={'freq,nace_r2,unit,isced11,geo\\TIME_PERIOD': 'category'}, inplace=True)
+data[['freq', 'nace_r2', 'unit', 'isced11', 'geo']] = data['category'].str.split(',', expand=True)
+data.drop(columns=['category'], inplace=True)
+data_long = pd.melt(data, id_vars=['freq', 'nace_r2', 'unit', 'isced11', 'geo'], var_name='year', value_name='employment_rate')
+data_long['employment_rate'] = data_long['employment_rate'].str.replace(' b', '').str.replace(' p', '')
+data_long['employment_rate'] = pd.to_numeric(data_long['employment_rate'], errors='coerce')
+relevant_sectors = ['C_HTC', 'HTC', 'KIS', 'KIS_HTC']
+data_filtered = data_long[(data_long['nace_r2'].isin(relevant_sectors)) & (data_long['unit'] == 'PC_EMP')]
 
-    st.write("Mean Employment by Level of Education:")
-    st.write(mean_employment)
+# Calculate metrics
+metrics = data_filtered.groupby(['year', 'isced11'])['employment_rate'].agg(['mean', 'std']).reset_index()
+metrics_filtered = metrics[~metrics['isced11'].isin(['TOTAL', 'NRP'])]
 
-    st.write("Standard Deviation of Employment by Level of Education:")
-    st.write(std_employment)
+# Streamlit app
+st.title("Employment in Technology and Knowledge-Intensive Sectors")
+st.write("""
+How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
+""")
 
-    # Create a line graph
-    fig, ax = plt.subplots()
-    for education_level in data_long['isced11'].unique():
-        subset = data_long[data_long['isced11'] == education_level]
-        subset = subset.sort_values('Year')
-        ax.plot(subset['Year'], subset['Employment'], label=education_level)
+# Dataset remarks
+st.header("Dataset Remarks")
+st.write(f"The dataset contains information about employment rates in technology and knowledge-intensive sectors for various education levels (ISCED categories) across multiple European countries.")
+st.write(f"**Number of unique ISCED categories:** {data_filtered['isced11'].nunique()}")
+st.write(f"**Number of unique countries (geo):** {data_filtered['geo'].nunique()}")
 
-    ax.set_xlabel('Year')
-    ax.set_ylabel('Employment')
-    ax.set_title('Employment in Technology and Knowledge-Intensive Sectors by Level of Education')
-    ax.legend(title='Level of Education')
+# Plotting
+st.header("Mean Employment Rates Over Time by Education Level")
+fig, ax = plt.subplots(figsize=(12, 8))
+for level in metrics_filtered['isced11'].unique():
+    subset = metrics_filtered[metrics_filtered['isced11'] == level]
+    ax.plot(subset['year'], subset['mean'], label=level)
+ax.set_xlabel('Year')
+ax.set_ylabel('Mean Employment Rate (%)')
+ax.set_title('Employment Rates in Technology and Knowledge-Intensive Sectors by Education Level')
+ax.legend(title='Education Level')
+ax.grid(True)
+st.pyplot(fig)
 
-    st.pyplot(fig)
+# Additional visualizations
+st.header("Standard Deviation of Employment Rates Over Time by Education Level")
+fig, ax = plt.subplots(figsize=(12, 8))
+for level in metrics_filtered['isced11'].unique():
+    subset = metrics_filtered[metrics_filtered['isced11'] == level]
+    ax.plot(subset['year'], subset['std'], label=level)
+ax.set_xlabel('Year')
+ax.set_ylabel('Standard Deviation of Employment Rate (%)')
+ax.set_title('Variability in Employment Rates by Education Level')
+ax.legend(title='Education Level')
+ax.grid(True)
+st.pyplot(fig)
 
-except FileNotFoundError:
-    st.error(f"The file at path {file_path} was not found. Please ensure the file exists and the path is correct.")
-except Exception as e:
-    st.error(f"An error occurred: {e}")
+st.header("Box Plot of Employment Rates by Education Level")
+fig, ax = plt.subplots(figsize=(12, 8))
+data_filtered_box = data_filtered[~data_filtered['isced11'].isin(['TOTAL', 'NRP'])]
+data_filtered_box = data_filtered_box.dropna(subset=['employment_rate'])
+data_filtered_box['year'] = data_filtered_box['year'].astype(int)
+data_filtered_box.boxplot(column='employment_rate', by='isced11', ax=ax, grid=False)
+ax.set_xlabel('Education Level')
+ax.set_ylabel('Employment Rate (%)')
+ax.set_title('Box Plot of Employment Rates by Education Level')
+fig.suptitle('')
+st.pyplot(fig)
+
+# Display Data Table
+st.header("Data Table")
+st.write(metrics_filtered)
+
+# Run Streamlit
+if __name__ == "__main__":
+    st.run()
