@@ -15,16 +15,19 @@ try:
     data.columns = data.columns.str.strip()  # Clean column names
     data = data.rename(columns=lambda x: x.split('\\')[0])  # Remove extra characters from column names
     data.replace(':', pd.NA, inplace=True)  # Handle missing values
-    data = data.dropna()  # Drop rows with missing values
+    data.dropna(inplace=True)  # Drop rows with missing values
+    
+    # Convert necessary columns to float
     for col in data.columns[5:]:
         data[col] = data[col].apply(lambda x: float(str(x).replace(' b', '')))
-
+    
     # Display the first few rows of the cleaned data
+    st.write("Cleaned Data Preview:")
     st.write(data.head())
-
+    
     # Transform data for easier plotting
     data_long = pd.melt(data, id_vars=['freq', 'nace_r2', 'unit', 'isced11', 'geo'], var_name='Year', value_name='Employment')
-
+    
     # Calculate mean and standard deviation
     mean_employment = data_long.groupby('isced11')['Employment'].mean()
     std_employment = data_long.groupby('isced11')['Employment'].std()
@@ -48,6 +51,7 @@ try:
     ax.legend(title='Level of Education')
 
     st.pyplot(fig)
+
 except FileNotFoundError:
     st.error(f"The file at path {file_path} was not found. Please ensure the file exists and the path is correct.")
 except Exception as e:
