@@ -48,10 +48,10 @@ Research question: How has employment in technology and knowledge-intensive sect
 # About me
 st.sidebar.title("About Me")
 st.sidebar.info("""
-Name: Reza Maliki Akbar <br>
-Email: [rakb0002@student.monash.edu](mailto:rakb0002@student.monash.edu) <br>
-Student Number: 34292020 <br>
-Master of Cybersecurity, Monash University
+- Name: Reza Maliki Akbar 
+- Email: [rakb0002@student.monash.edu](mailto:rakb0002@student.monash.edu) 
+- Student Number: 34292020 
+- Master of Cybersecurity, Monash University
 """)
 
 # Dataset remarks
