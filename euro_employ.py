@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 # Load the data
-file_path = 'path_to_your_file/estat_htec_emp_nisced2.tsv'  # Update this path
+file_path = 'estat_htec_emp_nisced2.tsv'  # Update this path
 data = pd.read_csv(file_path, sep='\t')
 
 # Clean and transform the data
