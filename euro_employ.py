@@ -120,6 +120,11 @@ ax.legend(title='Education Level')
 ax.grid(True)
 st.pyplot(fig)
 
+# Table for mean
+st.header("Mean Employment Rates by Education Level and Year")
+mean_table = filtered_metrics.pivot(index='year', columns='isced11', values='mean')
+st.dataframe(mean_table)
+
 # Additional visualizations
 st.header("Standard Deviation of Employment Rates Over Time by Education Level")
 fig, ax = plt.subplots(figsize=(12, 8))
@@ -132,6 +137,11 @@ ax.set_title('Variability in Employment Rates by Education Level')
 ax.legend(title='Education Level')
 ax.grid(True)
 st.pyplot(fig)
+
+# Table for std
+st.header("Standard Deviation of Employment Rates by Education Level and Year")
+std_table = filtered_metrics.pivot(index='year', columns='isced11', values='std')
+st.dataframe(std_table)
 
 st.header("Box Plot of Employment Rates by Education Level")
 fig, ax = plt.subplots(figsize=(12, 8))
@@ -148,11 +158,5 @@ st.pyplot(fig)
 st.header("Data Table")
 st.write(filtered_metrics)
 
-# Display Data Table for Mean and SD
-st.header("Mean Employment Rates by Education Level and Year")
-mean_table = filtered_metrics.pivot(index='year', columns='isced11', values='mean')
-st.dataframe(mean_table)
 
-st.header("Standard Deviation of Employment Rates by Education Level and Year")
-std_table = filtered_metrics.pivot(index='year', columns='isced11', values='std')
-st.dataframe(std_table)
+
