@@ -38,19 +38,20 @@ def get_flag_url(code):
     return f"https://flagcdn.com/w40/{code.lower()}.png"
 
 # Streamlit app
-st.set_page_config(page_title="Euro Employ Tech by Edu", page_icon=":bar_chart:", layout="wide")
+st.set_page_config(page_title="Euro Employ Tech by Education", page_icon=":bar_chart:", layout="wide")
 
 st.title("Employment in Technology and Knowledge-Intensive Sectors")
 st.write("""
-How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
+Research question: How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
 """)
 
 # About me
 st.sidebar.title("About Me")
 st.sidebar.info("""
-Student: [rakb0002@student.monash.edu](mailto:rakb0002@student.monash.edu)
-Student Number: 34292020
-Monash University, Master of Cybersecurity
+Name: Reza Maliki Akbar <br>
+Email: [rakb0002@student.monash.edu](mailto:rakb0002@student.monash.edu) <br>
+Student Number: 34292020 <br>
+Master of Cybersecurity, Monash University
 """)
 
 # Dataset remarks
@@ -64,6 +65,7 @@ st.write("""
 - **ISCED 0-2:** Lower levels of education (early childhood to lower secondary)
 - **ISCED 3-4:** Upper secondary to post-secondary non-tertiary education
 - **ISCED 5-8:** Tertiary education (short-cycle tertiary to doctoral level)
+- **ISCED 9:** Not applicable (used for miscellaneous categories or unknown education levels)
 """)
 
 # Interactive elements
@@ -80,20 +82,27 @@ selected_countries = st.multiselect(
     format_func=lambda x: f"{get_country_name(x)} ({x})"
 )
 
-# Display selected countries with flags
+# Display selected countries with flags in a grid
 st.write("### Selected Countries and Flags")
-cols = st.columns(len(selected_countries))
-for col, country_code in zip(cols, selected_countries):
-    country_name = get_country_name(country_code)
-    flag_url = get_flag_url(country_code)
-    try:
-        response = requests.get(flag_url)
-        response.raise_for_status()  # Ensure we handle HTTP errors
-        img = Image.open(BytesIO(response.content))
-        col.image(img, width=40)
-    except (requests.exceptions.RequestException, UnidentifiedImageError):
-        col.write(f"{country_name} (flag not available)")
-    col.write(country_name)
+num_columns = 6  # You can adjust this number based on your preference
+num_rows = (len(selected_countries) + num_columns - 1) // num_columns
+
+for row in range(num_rows):
+    cols = st.columns(num_columns)
+    for col_index in range(num_columns):
+        country_index = row * num_columns + col_index
+        if country_index < len(selected_countries):
+            country_code = selected_countries[country_index]
+            country_name = get_country_name(country_code)
+            flag_url = get_flag_url(country_code)
+            try:
+                response = requests.get(flag_url)
+                response.raise_for_status()  # Ensure we handle HTTP errors
+                img = Image.open(BytesIO(response.content))
+                cols[col_index].image(img, width=40)
+            except (requests.exceptions.RequestException, UnidentifiedImageError):
+                cols[col_index].write(f"{country_name} (flag not available)")
+            cols[col_index].write(country_name)
 
 # Filter data based on selections
 filtered_data = data_filtered[data_filtered['isced11'].isin(selected_education_levels) & data_filtered['geo'].isin(selected_countries)]
