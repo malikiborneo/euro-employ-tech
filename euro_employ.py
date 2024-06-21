@@ -42,7 +42,7 @@ st.set_page_config(page_title="Euro Employ Tech by Education", page_icon=":bar_c
 
 st.title("Employment in Technology and Knowledge-Intensive Sectors")
 st.write("""
-Research question: How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
+**Research question:** How has employment in technology and knowledge-intensive sectors evolved over time for different levels of education in Europe?
 """)
 
 # About me
