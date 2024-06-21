@@ -27,6 +27,10 @@ metrics_filtered = metrics[~metrics['isced11'].isin(['TOTAL', 'NRP'])]
 
 # Country code to country name mapping
 def get_country_name(code):
+    if code == 'EL':
+        code = 'GR'  # Correcting Greece code
+    elif code == 'UK':
+        code = 'GB'  # Correcting UK code
     try:
         country = pycountry.countries.get(alpha_2=code)
         return country.name
@@ -35,6 +39,10 @@ def get_country_name(code):
 
 # Country code to flag URL mapping
 def get_flag_url(code):
+    if code == 'EL':
+        code = 'GR'  # Correcting Greece code
+    elif code == 'UK':
+        code = 'GB'  # Correcting UK code
     return f"https://flagcdn.com/w40/{code.lower()}.png"
 
 # Streamlit app
