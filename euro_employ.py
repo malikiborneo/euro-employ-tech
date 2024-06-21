@@ -1,10 +1,5 @@
 import streamlit as st
 import pandas as pd
-
-# Ensure matplotlib is installed
-import os
-os.system('pip install matplotlib')
-
 import matplotlib.pyplot as plt
 
 st.title('Employment in Technology and Knowledge-Intensive Sectors by Level of Education')
