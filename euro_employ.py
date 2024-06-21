@@ -54,6 +54,7 @@ st.write("""
 - **ISCED 0-2:** Lower levels of education (early childhood to lower secondary)
 - **ISCED 3-4:** Upper secondary to post-secondary non-tertiary education
 - **ISCED 5-8:** Tertiary education (short-cycle tertiary to doctoral level)
+- **ISCED 9:** Not applicable (used for miscellaneous categories or unknown education levels)
 """)
 
 # Interactive elements
@@ -115,4 +116,13 @@ st.header("Box Plot of Employment Rates by Education Level")
 fig, ax = plt.subplots(figsize=(12, 8))
 filtered_data_box = filtered_data.dropna(subset=['employment_rate'])
 filtered_data_box['year'] = filtered_data_box['year'].astype(int)
-filtered_data_box.boxplot(column=
+filtered_data_box.boxplot(column='employment_rate', by='isced11', ax=ax, grid=False)
+ax.set_xlabel('Education Level')
+ax.set_ylabel('Employment Rate (%)')
+ax.set_title('Box Plot of Employment Rates by Education Level')
+fig.suptitle('')
+st.pyplot(fig)
+
+# Display Data Table
+st.header("Data Table")
+st.write(filtered_metrics)
