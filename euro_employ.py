@@ -52,6 +52,14 @@ def get_flag_url(code):
     return f"https://flagcdn.com/w40/{code.lower()}.png"
 
 
+# Function to fetch and display SVG images
+def display_svg(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    image_bytes = response.content
+    return Image.open(BytesIO(image_bytes))
+
+
 # Streamlit app
 st.set_page_config(page_title="Euro Employ Tech by Education", page_icon=":bar_chart:", layout="wide")
 
